@@ -1,10 +1,9 @@
 const path = require('path');
 const copyPlugin = require('copy-webpack-plugin');
 const htmlPlugin = require('html-webpack-plugin');
+const { CleanWebpackPlugin } = require('clean-webpack-plugin')
 
 module.exports = {
-    mode: 'development',
-    devtool: 'cheap-module-source-map',
     entry: {
         popup: path.resolve('src/popup/popup.tsx'),
         options: path.resolve('src/options/options.tsx'),
@@ -19,6 +18,7 @@ module.exports = {
                 exclude: /node_modules/,
             },
             {
+                // for handling css webpack build
                 use: ['style-loader', 'css-loader'],
                 test: /\.css$/i
             },
@@ -29,6 +29,11 @@ module.exports = {
         ]
     },
     plugins: [
+        // Clean the build when mode(dev->prod or vice-versa) changes
+        // Prod build takes less storage
+        new CleanWebpackPlugin({
+            cleanStaleWebpackAssets: false
+        }),
         new copyPlugin({
             patterns: [
                 {
@@ -50,6 +55,7 @@ module.exports = {
         path: path.resolve('dist')
     },
     optimization: {
+        // same react module used for all the chunks(.ts files react modules are same everywhere)
         splitChunks: {
             chunks: 'all'
         }

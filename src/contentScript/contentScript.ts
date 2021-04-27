@@ -1,1 +1,3 @@
-console.log("Hey from content script!");
+chrome.runtime.sendMessage("Message from content script", (response) => {
+    console.log(response);
+})
